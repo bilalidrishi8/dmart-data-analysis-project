@@ -1,0 +1,206 @@
+CREATE TABLE dmart_products (
+    product_name        VARCHAR(255),
+    brand               VARCHAR(200),
+    price               NUMERIC(10,2),
+    discounted_price    NUMERIC(10,2),
+    category            VARCHAR(200),
+    sub_category        VARCHAR(200),
+    quantity            VARCHAR(200),
+    description         TEXT,
+    breadcrumbs         TEXT
+);
+
+SELECT * FROM dmart_products
+
+-- 1.Find the total inventory value for each category.
+SELECT * FROM dmart_products
+
+SELECT
+    category,
+    ROUND(SUM(discounted_price), 2) AS total_inventory_value
+FROM dmart_products
+GROUP BY category
+ORDER BY total_inventory_value DESC;
+
+-- 2.Find the top 5 brands with the highest average product price.
+SELECT * FROM dmart_products
+
+SELECT
+    brand,
+    ROUND(AVG(price), 2) AS average_price
+FROM dmart_products
+GROUP BY brand
+ORDER BY average_price DESC
+LIMIT 5;
+
+-- 3.Count the number of products available for each brand.
+SELECT * FROM dmart_products
+
+SELECT
+    brand,
+    COUNT(*) AS total_products
+FROM dmart_products
+GROUP BY brand
+ORDER BY total_products DESC;
+
+-- 4.Find categories whose average price is above the overall average price.
+SELECT * FROM dmart_products
+
+SELECT
+    category,
+    ROUND(AVG(price), 2) AS average_price
+FROM dmart_products
+GROUP BY category
+HAVING AVG(price) >
+(
+    SELECT AVG(price)
+    FROM dmart_products
+);
+
+-- 5.Calculate the average discount percentage for each category.
+SELECT * FROM dmart_products
+
+SELECT category,
+ROUND(AVG(discounted_price),2) AS average_discount
+FROM dmart_products
+GROUP BY category
+
+SELECT
+    category,
+    ROUND(AVG((price - discounted_price) * 100 / price), 2) AS average_discount_percentage
+FROM dmart_products
+GROUP BY category
+ORDER BY average_discount_percentage DESC;
+
+-- 6.Rank products by price within each category.
+SELECT * FROM dmart_products
+
+SELECT
+    product_name,
+    category,
+    price,
+    RANK() OVER(
+        PARTITION BY category
+        ORDER BY price DESC
+    ) AS price_rank
+FROM dmart_products;
+
+-- 7.Find the highest-priced product for each brand.
+SELECT * FROM dmart_products
+
+SELECT *
+FROM (
+    SELECT
+        brand,
+        product_name,
+        price,
+        ROW_NUMBER() OVER(
+            PARTITION BY brand
+            ORDER BY price DESC
+        ) AS rn
+    FROM dmart_products
+) t
+WHERE rn = 1;
+
+-- 8.Calculate each category's contribution to total inventory value.
+SELECT * FROM dmart_products
+
+SELECT
+    category,
+    ROUND(SUM(discounted_price),2) AS inventory_value,
+    ROUND(
+        SUM(discounted_price) * 100.0 /
+        SUM(SUM(discounted_price)) OVER(),
+        2
+    ) AS contribution_percentage
+FROM dmart_products
+GROUP BY category;
+
+-- 9.Calculate the discount percentage for each product.
+SELECT * FROM dmart_products
+
+SELECT
+    product_name,
+    price,
+    discounted_price,
+    ROUND(
+        (price - discounted_price) * 100 / price,
+        2
+    ) AS discount_percentage
+FROM dmart_products;
+
+-- 10.Find duplicate product names.
+SELECT * FROM dmart_products
+
+SELECT
+    product_name,
+    COUNT(*) AS duplicate_count
+FROM dmart_products
+GROUP BY product_name
+HAVING COUNT(*) > 1;
+
+-- 11.Categorize products into Budget, Mid-Range, and Premium using CASE.
+SELECT * FROM dmart_products
+
+SELECT
+    product_name,
+    price,
+    CASE
+        WHEN price < 200 THEN 'Budget'
+        WHEN price BETWEEN 200 AND 500 THEN 'Mid-Range'
+        ELSE 'Premium'
+    END AS price_category
+FROM dmart_products;
+
+-- 12.Find brands with above-average pricing.
+SELECT * FROM dmart_products
+
+SELECT
+    brand,
+    ROUND(AVG(price),2) AS average_price
+FROM dmart_products
+GROUP BY brand
+HAVING AVG(price) >
+(
+    SELECT AVG(price)
+    FROM dmart_products
+);
+
+-- 13.Find the top 5 brands by average discounted price.
+SELECT * FROM dmart_products
+
+SELECT
+    brand,
+    ROUND(AVG(discounted_price),2) AS average_discounted_price
+FROM dmart_products
+GROUP BY brand
+ORDER BY average_discounted_price DESC
+LIMIT 5;
+
+-- 14.Rank sub-categories within each category by average price.
+SELECT * FROM dmart_products
+
+SELECT
+    category,
+    sub_category,
+    ROUND(AVG(price),2) AS average_price,
+    RANK() OVER(
+        PARTITION BY category
+        ORDER BY AVG(price) DESC
+    ) AS price_rank
+FROM dmart_products
+GROUP BY category, sub_category;
+
+-- 15.Identify products with the largest price reduction.
+SELECT * FROM dmart_products
+
+SELECT
+    product_name,
+    price,
+    discounted_price,
+    (price - discounted_price) AS price_reduction
+FROM dmart_products
+ORDER BY price_reduction DESC
+LIMIT 10;
+
+--END THE PROJECT--
