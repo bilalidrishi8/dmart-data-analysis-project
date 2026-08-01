@@ -1,0 +1,15 @@
+-- 1.Find the total inventory value for each category.
+-- 2.Find the top 5 brands with the highest average product price.
+-- 3.Count the number of products available for each brand.
+-- 4.Find categories whose average price is above the overall average price.
+-- 5.Calculate the average discount percentage for each category.
+-- 6.Rank products by price within each category.
+-- 7.Find the highest-priced product for each brand.
+-- 8.Calculate each category's contribution to total inventory value.
+-- 9.Calculate the discount percentage for each product.
+-- 10.Find duplicate product names.
+-- 11.Categorize products into Budget, Mid-Range, and Premium using CASE.
+-- 12.Find brands with above-average pricing.
+-- 13.Find the top 5 brands by average discounted price.
+-- 14.Rank sub-categories within each category by average price.
+-- 15.Identify products with the largest price reduction.
